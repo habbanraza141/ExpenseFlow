@@ -9,6 +9,9 @@ const expenseSlice = createSlice({
   name: 'expenses',
   initialState,
   reducers: {
+    hydrateExpenses: (state, action) => {
+      state.expenses = action.payload;
+    },
     addExpense: (state, action) => {
       state.expenses.unshift(action.payload);
     },
@@ -24,5 +27,5 @@ const expenseSlice = createSlice({
   },
 });
 
-export const {addExpense, editExpense, deleteExpense} = expenseSlice.actions;
+export const {hydrateExpenses, addExpense, editExpense, deleteExpense} = expenseSlice.actions;
 export default expenseSlice.reducer;

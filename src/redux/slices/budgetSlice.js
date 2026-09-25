@@ -9,6 +9,9 @@ const budgetSlice = createSlice({
   name: 'budgets',
   initialState,
   reducers: {
+    hydrateBudgets: (state, action) => {
+      state.budgets = action.payload;
+    },
     setBudget: (state, action) => {
       const {category, monthlyLimit} = action.payload;
       const existing = state.budgets.find(b => b.category === category);
@@ -24,5 +27,5 @@ const budgetSlice = createSlice({
   },
 });
 
-export const {setBudget, removeBudget} = budgetSlice.actions;
+export const {hydrateBudgets, setBudget, removeBudget} = budgetSlice.actions;
 export default budgetSlice.reducer;

@@ -9,6 +9,9 @@ const categorySlice = createSlice({
   name: 'categories',
   initialState,
   reducers: {
+    hydrateCategories: (state, action) => {
+      state.categories = action.payload;
+    },
     addCategory: (state, action) => {
       state.categories.push(action.payload);
     },
@@ -18,5 +21,5 @@ const categorySlice = createSlice({
   },
 });
 
-export const {addCategory, removeCategory} = categorySlice.actions;
+export const {hydrateCategories, addCategory, removeCategory} = categorySlice.actions;
 export default categorySlice.reducer;

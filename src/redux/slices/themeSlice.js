@@ -8,6 +8,9 @@ const themeSlice = createSlice({
   name: 'theme',
   initialState,
   reducers: {
+    hydrateTheme: (state, action) => {
+      state.mode = action.payload === 'dark' ? 'dark' : 'light';
+    },
     toggleTheme: state => {
       state.mode = state.mode === 'light' ? 'dark' : 'light';
     },
@@ -17,5 +20,5 @@ const themeSlice = createSlice({
   },
 });
 
-export const {toggleTheme, setTheme} = themeSlice.actions;
+export const {hydrateTheme, toggleTheme, setTheme} = themeSlice.actions;
 export default themeSlice.reducer;

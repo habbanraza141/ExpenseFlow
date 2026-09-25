@@ -9,6 +9,10 @@ const authSlice = createSlice({
   name: 'auth',
   initialState,
   reducers: {
+    hydrateAuth: (state, action) => {
+      state.user = action.payload.user || null;
+      state.isAuthenticated = Boolean(action.payload.user);
+    },
     setUser: (state, action) => {
       state.user = action.payload;
       state.isAuthenticated = true;
@@ -23,5 +27,5 @@ const authSlice = createSlice({
   },
 });
 
-export const {setUser, logout, updateUser} = authSlice.actions;
+export const {hydrateAuth, setUser, logout, updateUser} = authSlice.actions;
 export default authSlice.reducer;

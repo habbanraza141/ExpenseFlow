@@ -1,5 +1,5 @@
 import React from 'react';
-import {View, Text, StyleSheet, TouchableOpacity, Switch} from 'react-native';
+import {View, Text, StyleSheet, TouchableOpacity, Switch, Share, Alert} from 'react-native';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import {useNavigation} from '@react-navigation/native';
 import {ScreenWrapper, PrimaryButton} from '../components';
@@ -13,6 +13,19 @@ const ProfileScreen = () => {
   const navigation = useNavigation();
   const dispatch = useAppDispatch();
   const user = useAppSelector(s => s.auth.user);
+  const expenses = useAppSelector(s => s.expenses.expenses);
+  const budgets = useAppSelector(s => s.budgets.budgets);
+
+  const exportData = async () => {
+    try {
+      await Share.share({
+        title: 'ExpenseFlow data export',
+        message: JSON.stringify({user, expenses, budgets}, null, 2),
+      });
+    } catch (error) {
+      Alert.alert('Export failed', 'Your local data could not be shared right now.');
+    }
+  };
 
   const menuItems = [
     {
@@ -29,8 +42,8 @@ const ProfileScreen = () => {
     {
       icon: 'file-upload',
       label: 'Export Data',
-      subtitle: 'Coming soon',
-      disabled: true,
+      subtitle: 'Share a JSON backup',
+      onPress: exportData,
     },
     {
       icon: 'verified-user',

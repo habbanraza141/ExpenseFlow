@@ -1,5 +1,6 @@
 import React, {useState, useMemo, useCallback} from 'react';
-import {View, Text, StyleSheet, FlatList, Alert} from 'react-native';
+import {View, Text, StyleSheet, FlatList, Alert, TextInput} from 'react-native';
+import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import {useNavigation} from '@react-navigation/native';
 import {
   ScreenWrapper,
@@ -18,6 +19,7 @@ const ExpenseListScreen = () => {
   const dispatch = useAppDispatch();
   const expenses = useAppSelector(s => s.expenses.expenses);
   const [filterCat, setFilterCat] = useState('all');
+  const [query, setQuery] = useState('');
 
   const sorted = useMemo(
     () => [...expenses].sort((a, b) => b.date - a.date),
@@ -25,8 +27,18 @@ const ExpenseListScreen = () => {
   );
 
   const filtered = useMemo(
-    () => (filterCat === 'all' ? sorted : sorted.filter(e => e.category === filterCat)),
-    [sorted, filterCat],
+    () => {
+      const normalizedQuery = query.trim().toLowerCase();
+      return sorted.filter(expense => {
+        const matchesCategory = filterCat === 'all' || expense.category === filterCat;
+        const matchesQuery =
+          !normalizedQuery ||
+          expense.title.toLowerCase().includes(normalizedQuery) ||
+          expense.description?.toLowerCase().includes(normalizedQuery);
+        return matchesCategory && matchesQuery;
+      });
+    },
+    [sorted, filterCat, query],
   );
 
   const handleDelete = useCallback(
@@ -56,6 +68,26 @@ const ExpenseListScreen = () => {
         <Text style={[styles.count, {color: colors.textSecondary, fontFamily: fonts.regular}]}>
           {filtered.length} transaction{filtered.length !== 1 ? 's' : ''}
         </Text>
+      </View>
+
+      <View style={[styles.searchBox, {backgroundColor: colors.surface, borderColor: colors.border}]}>
+        <MaterialIcons name="search" size={20} color={colors.textTertiary} />
+        <TextInput
+          value={query}
+          onChangeText={setQuery}
+          placeholder="Search expenses"
+          placeholderTextColor={colors.textTertiary}
+          style={[styles.searchInput, {color: colors.text, fontFamily: fonts.regular}]}
+          returnKeyType="search"
+        />
+        {!!query && (
+          <MaterialIcons
+            name="close"
+            size={18}
+            color={colors.textTertiary}
+            onPress={() => setQuery('')}
+          />
+        )}
       </View>
 
       <View style={styles.filterWrap}>
@@ -104,6 +136,17 @@ const styles = StyleSheet.create({
   filterWrap: {paddingLeft: 20, marginBottom: 8},
   list: {paddingBottom: 90},
   cardPad: {paddingHorizontal: 20},
+  searchBox: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginHorizontal: 20,
+    marginVertical: 12,
+    paddingHorizontal: 12,
+    borderWidth: 1,
+    borderRadius: 12,
+    height: 46,
+  },
+  searchInput: {flex: 1, marginLeft: 8, fontSize: 14},
 });
 
 export default ExpenseListScreen;
